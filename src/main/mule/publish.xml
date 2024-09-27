@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8f3a6b35-fc5a-47ca-871b-fc5227fc2660" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="d041bcbe-e299-4c75-8f82-7bb59757e5a8" >
+		<vm:queues >
+			<vm:queue queueName="que" />
+		</vm:queues>
+	</vm:config>
+	<flow name="publishFlow" doc:id="69d87aae-4c95-4670-a9bb-121498785da2" >
+		<http:listener doc:name="Listener" doc:id="a59bac8f-5ab0-4dcf-9181-f62b388988ed" config-ref="HTTP_Listener_config" path="vm"/>
+		<vm:publish queueName="que" doc:name="Publish" doc:id="18179ca0-9fe4-4da4-8bc1-2d1ba39aa6a3" config-ref="VM_Config" timeoutUnit="MINUTES"/>
+	</flow>
+	<flow name="publishFlow2" doc:id="8b98fc4d-311e-4e09-95c9-34bfd1c261b7" >
+		<http:listener doc:name="Listener" doc:id="a2db86aa-9163-4f39-b405-e5ceff2ef56f" config-ref="HTTP_Listener_config" path="con"/>
+		<vm:consume doc:name="Consume" doc:id="25793740-6b25-4593-93a4-5f25ccfea636" config-ref="VM_Config" queueName="que"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e89983f1-4ae6-4220-b7ba-ca857375ebca" message="#[payload]"/>
+	</flow>
+</mule>
